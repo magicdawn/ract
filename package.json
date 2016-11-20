@@ -2,7 +2,7 @@
   "name": "ract",
   "version": "0.0.1",
   "description": "Yet another template engine learns from ractive",
-  "main": "index.js",
+  "main": "lib/",
   "scripts": {
     "test": "mocha",
     "test-cover": "nyc --reporter=html --reporter=text mocha",

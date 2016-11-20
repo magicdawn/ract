@@ -38,6 +38,6 @@ rules:
 parserOptions:
   ecmaVersion: 6
   ecmaFeatures:
-    impliedStrict: true
+    # impliedStrict: true
 
 extends: 'eslint:recommended'
