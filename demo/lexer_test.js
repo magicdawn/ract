@@ -4,7 +4,7 @@ const util = require('util')
 const Lexer = require('../').Lexer
 const Parser = require('../').Parser
 
-const filename = __dirname + '/test.html'
+const filename = __dirname + '/test_extending.html'
 const html = require('fs').readFileSync(filename, 'utf8')
 
 // const lexer = new Lexer(html)
