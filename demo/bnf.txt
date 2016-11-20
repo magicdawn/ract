@@ -1,0 +1,27 @@
+expr
+  : '{{' directive '}}'
+  | '{{' 'else' '}}'
+  | '{{#' section '}}'
+  | '{{/' closesection '}}'
+  | '{{!' jsexpr '}}'
+  | '{{-' jscode '}}'
+  | '{{' jsexpr '}}'
+  | text
+
+# 指令
+directive
+  : include string
+  : block string
+  : extend string
+
+# section
+section
+  : "if" jsexpr
+  : "else if" jsexpr
+  :
+
+# 关闭 section
+closesection : name
+
+string
+  : 文件

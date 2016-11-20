@@ -1,0 +1,55 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+</head>
+<body>
+  <!-- 插值 -->
+  {{ console }}
+
+  <!-- 不转义 -->
+  {{! html }}
+
+  <!-- 代码 -->
+  {{- var name = 1 }}
+
+  <!-- {{---ss}} -->
+  {{# 注释 #}}
+
+  <!-- 条件 -->
+  {{#if some}}
+    <a href="#if"></a>
+  {{else if bla}}
+    <a href="#lese"></a>
+  {{/if}}
+
+  {{#if obj.name['1234']}}
+  {{/if}}
+
+  {{#if true}}
+  {{/if}}
+
+  <!-- 迭代 -->
+  {{#each item in array-}}
+    console
+  {{/each}}
+
+  <!-- 指令 -->
+  {{extend some}}
+  {{block some }}
+  {{include test}}
+
+  <!-- 模板继承 -->
+  {{#block some}}
+    override
+  {{/block}}
+  {{#append some}}
+    append
+  {{/append}}
+  {{#prepend some}}
+    prepend
+  {{/prepend}}
+
+  <!-- {{#你好}} -->
+</body>
+</html>

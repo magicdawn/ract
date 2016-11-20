@@ -1,0 +1,23 @@
+File
+  : extend
+  | chunk
+  | blockImpl chunk endBlockImpl
+
+Chunk
+  : text
+  | htmlComment
+  | comment
+  | interpolation
+  | code
+  | include
+  | blockDefine
+  | if
+  | each
+
+if
+  : if chunk (elseif chunk)* (else chunk)? endif
+
+each
+  : each chunk endeach
+
+
