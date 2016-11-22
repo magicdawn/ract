@@ -5,7 +5,7 @@ const Lexer = require('../').Lexer
 const Parser = require('../').Parser
 const PostParser = require('../lib/postparser.js')
 
-const filename = __dirname + '/test.html'
+const filename = __dirname + '/html/extend.html'
 const html = require('fs').readFileSync(filename, 'utf8')
 
 // const lexer = new Lexer(html)
