@@ -3,8 +3,9 @@
 const util = require('util')
 const Lexer = require('../').Lexer
 const Parser = require('../').Parser
+const PostParser = require('../lib/postparser.js')
 
-const filename = __dirname + '/test_extending.html'
+const filename = __dirname + '/test.html'
 const html = require('fs').readFileSync(filename, 'utf8')
 
 // const lexer = new Lexer(html)
@@ -16,5 +17,11 @@ console.log('----------------------')
 const p = new Parser(html, filename)
 const ast = p.parse()
 console.log(util.inspect(ast, {
-  depth: 5
+  depth: null
+}))
+
+console.log('----------------------')
+new PostParser(ast)
+console.log(util.inspect(ast, {
+  depth: null
 }))
