@@ -23,5 +23,12 @@ console.log(util.inspect(ast, {
 }))
 
 const compiler = new Compiler(ast)
-const code = compiler.compile()
-console.log(code)
+const fn = compiler.compile()
+console.log(fn.toString())
+
+console.log('------------------')
+const result = fn({
+  some: 'hellio',
+  array: [1,2,3]
+})
+console.log(result)
