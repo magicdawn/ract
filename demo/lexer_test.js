@@ -18,9 +18,9 @@ console.log('----------------------')
 const p = new Parser(html, filename)
 const ast = p.parse()
 new PostParser(ast)
-// console.log(util.inspect(ast, {
-//   depth: null
-// }))
+console.log(util.inspect(ast, {
+  depth: null
+}))
 
 const compiler = new Compiler(ast)
 const code = compiler.compile()
