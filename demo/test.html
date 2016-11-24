@@ -10,9 +10,8 @@
 
   <!-- 不转义 -->
   {{! html }}
-
-  <!-- 代码 -->
   {{- var name = 1 }}
+  {{name}}
   <!-- {{- sasa@asas }} -->
 
   <!-- {{---ss}} -->
@@ -28,8 +27,7 @@
   {{#if obj.name['1234']}}
   {{/if}}
 
-  {{#if true}}
-  {{/if}}
+  {{#if true}}{{ name }}{{/if}}
 
   <!-- 迭代 -->
   {{#each item in array}}

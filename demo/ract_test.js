@@ -3,7 +3,9 @@
 const ract = require('../')
 
 const filename = __dirname + '/test.html'
-const html = ract.renderFile(filename, {
+const fn = ract.compileFile(filename)
+console.log(fn.toString());
+const html = fn({
   some: 'hellio',
   array: [1, 2, 3]
 })
