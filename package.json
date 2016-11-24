@@ -36,6 +36,7 @@
   },
   "dependencies": {
     "debug": "^2.3.3",
+    "lodash": "^4.17.2",
     "string-width": "^2.0.0"
   }
 }
