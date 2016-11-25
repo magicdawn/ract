@@ -5,8 +5,8 @@
   "main": "lib/",
   "scripts": {
     "test": "mocha",
-    "test-cover": "nyc --reporter=html --reporter=text mocha",
-    "report-cover": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
+    "test-cover": "istanbul cover _mocha -- -u exports",
+    "report-cover": "codecov"
   },
   "repository": {
     "type": "git",
@@ -24,14 +24,10 @@
   },
   "homepage": "https://github.com/magicdawn/ract#readme",
   "devDependencies": {
-    "babel-eslint": "^7.1.0",
-    "babel-plugin-transform-async-to-generator": "^6.16.0",
-    "babel-polyfill": "^6.16.0",
-    "babel-register": "^6.18.0",
     "codecov": "^1.0.1",
     "eslint": "^3.10.0",
+    "istanbul": "^0.4.5",
     "mocha": "^3.1.2",
-    "nyc": "^8.4.0",
     "should": "^11.1.1"
   },
   "dependencies": {

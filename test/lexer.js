@@ -2,7 +2,7 @@ const Lexer = require('../lib/lexer.js')
 
 describe('Lexer', function() {
 
-  it('lex', async function() {
+  it('lex', function() {
     const input = `
     <html>
       <!--html comment-->
@@ -14,6 +14,10 @@ describe('Lexer', function() {
 
       {{#if true}}
         hello
+      {{else if false}}
+        elseif
+      {{else}}
+        else
       {{/if}}
       {{#each item in array}}
         {{item}}
@@ -21,6 +25,9 @@ describe('Lexer', function() {
       {{#each index,item in array}}
         {{index}} - {{item}}
       {{/each}}
+
+      {{include hello}}
+      {{extend foo}}
     </html>
     `
     const filename = 'fake.filename'
