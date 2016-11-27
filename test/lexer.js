@@ -79,11 +79,4 @@ describe('Lexer', function() {
       e.message.should.equal('bad js code')
     }
   })
-
-  // it('eos token', () => {
-  //   const input = '{{name}}'
-  //   const filename = 'fake.filename'
-  //   const tokens = new Lexer(input, filename).lex()
-  //   console.log(tokens)
-  // })
 })
