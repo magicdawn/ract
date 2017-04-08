@@ -1,4 +1,6 @@
 # ract
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/magicdawn/ract.svg)](https://greenkeeper.io/)
 > Yet another template engine learns from ractive
 
 [![Build Status](https://img.shields.io/travis/magicdawn/ract.svg?style=flat-square)](https://travis-ci.org/magicdawn/ract)
