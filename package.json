@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/magicdawn/ract#readme",
   "devDependencies": {
-    "codecov": "^1.0.1",
+    "codecov": "^2.1.0",
     "eslint": "^3.10.0",
     "istanbul": "^0.4.5",
     "mocha": "^3.1.2",
