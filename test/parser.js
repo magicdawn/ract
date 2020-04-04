@@ -1,13 +1,11 @@
-'use strict'
-
 const Parser = require('../lib/parser.js')
 const PostParser = require('../lib/postparser.js')
 const RactSyntaxError = require('../lib/ractSyntaxError.js')
 
-describe('Parser', function() {
+describe('Parser', function () {
   const filename = 'fake.filename'
 
-  it('#parse', function() {
+  it('#parse', function () {
     const input = `
     <html>
       <!--html comment-->
@@ -46,7 +44,7 @@ describe('Parser', function() {
     f.should.be.ok()
   })
 
-  it('#expect type', function() {
+  it('#expect type', function () {
     const input = '{{#block foo}}hello'
     const parser = new Parser(input, filename, false)
 
@@ -58,7 +56,7 @@ describe('Parser', function() {
     }
   })
 
-  it('#expect val', function() {
+  it('#expect val', function () {
     const input = '{{#block foo}}{{/append}}'
     const parser = new Parser(input, filename, false)
 
@@ -70,7 +68,7 @@ describe('Parser', function() {
     }
   })
 
-  it('#parse duplicate block definition', function() {
+  it('#parse duplicate block definition', function () {
     const input = '{{block foo}}{{#block foo}}{{/block}}'
     const parser = new Parser(input, filename, false)
 
@@ -82,12 +80,12 @@ describe('Parser', function() {
     }
   })
 
-  it('#parse extend', function() {
+  it('#parse extend', function () {
     const dirname = __dirname + '/fixtures/parser/'
     Parser.parse(dirname + 'extend.html')
   })
 
-  it('#parse extend no match block', function() {
+  it('#parse extend no match block', function () {
     const dirname = __dirname + '/fixtures/parser/'
     try {
       Parser.parse(dirname + 'extend_no_match.html')
@@ -97,7 +95,7 @@ describe('Parser', function() {
     }
   })
 
-  it('#parse extend only once', function() {
+  it('#parse extend only once', function () {
     const input = '{{extend 1}}{{extend 2}}'
     const parser = new Parser(input, filename)
     try {

@@ -1,5 +1,3 @@
-'use strict'
-
 const Lexer = require('../lib/lexer.js')
 const RactSyntaxError = require('../lib/ractSyntaxError.js')
 
