@@ -5,8 +5,9 @@
   "main": "lib/",
   "scripts": {
     "test": "mocha",
-    "test-cover": "istanbul cover _mocha -- -u exports",
-    "report-cover": "codecov"
+    "test-cover": "nyc --reporter=lcov --reporter=text mocha",
+    "report-cover": "codecov",
+    "gen-readme": "swig render ./readme/readme.md > README.md && prettier --write README.md"
   },
   "repository": {
     "type": "git",
@@ -24,15 +25,32 @@
   },
   "homepage": "https://github.com/magicdawn/ract#readme",
   "devDependencies": {
-    "codecov": "^1.0.1",
-    "eslint": "^3.10.0",
+    "@magicdawn/eslint-config": "latest",
+    "@magicdawn/prettier-config": "latest",
+    "codecov": "^3.3.0",
+    "eslint": "^6.8.0",
+    "husky": "latest",
     "istanbul": "^0.4.5",
-    "mocha": "^3.1.2",
-    "should": "^11.1.1"
+    "lint-staged": "latest",
+    "mocha": "^7.1.1",
+    "nyc": "^15.0.1",
+    "prettier": "latest",
+    "should": "^13.2.3"
   },
   "dependencies": {
-    "debug": "^2.3.3",
-    "lodash": "^4.17.2",
-    "string-width": "^2.0.0"
+    "debug": "^4.1.1",
+    "lodash": "^4.17.15",
+    "string-width": "^4.2.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,less,vue}": [
+      "prettier --write",
+      "git add"
+    ]
   }
 }

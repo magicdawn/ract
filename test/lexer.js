@@ -3,8 +3,8 @@
 const Lexer = require('../lib/lexer.js')
 const RactSyntaxError = require('../lib/ractSyntaxError.js')
 
-describe('Lexer', function() {
-  it('#lex', function() {
+describe('Lexer', function () {
+  it('#lex', function () {
     const input = `
     <html>
       <!--html comment-->
