@@ -1,24 +1,15 @@
-const fs = require('fs')
-const path = require('path')
-const assert = require('assert')
-const _trim = require('lodash/trim')
-const _cloneDeep = require('lodash/cloneDeep')
-const Parser = require('./parser.js')
-const LocalUtil = require('./util.js')
-const ractError = require('./ractSyntaxError.js').error
-
-Parser.parse = function (filename, included) {
-  const input = fs.readFileSync(filename, 'utf8')
-  const f = new Parser(input, filename, included).parse()
-  new PostParser(input, filename, f)
-  return f
-}
+import assert from 'assert'
+import { trim } from 'lodash-es'
+import path from 'path'
+import { Parser } from './parser'
+import { ractError } from './ractSyntaxError'
+import * as LocalUtil from './util'
 
 /**
  * 处理
  */
 
-const PostParser = (module.exports = class PostParser {
+export class PostParser {
   constructor(input, filename, f) {
     this.input = input
     this.filename = filename
@@ -40,7 +31,7 @@ const PostParser = (module.exports = class PostParser {
           }
 
           // 只允许空白 text
-          if (node.type === 'text' && _trim(node.val)) {
+          if (node.type === 'text' && trim(node.val)) {
             throw this.error('text not allowed in extending template', node.pos)
           }
         }
@@ -107,7 +98,7 @@ const PostParser = (module.exports = class PostParser {
     // replace
     this.file.nodes = f.nodes
   }
-})
+}
 
 /**
  * add this.error

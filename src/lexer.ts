@@ -1,27 +1,54 @@
-const debug = require('debug')('ract:lexer')
-const _ = require('lodash')
-const RactSyntaxError = require('./ractSyntaxError.js')
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { baseDebug } from './common'
+import { RactSyntaxError } from './ractSyntaxError'
+
+const debug = baseDebug.extend('lexer')
+
+export type TokenType =
+  | 'htmlComment'
+  | 'comment'
+  | 'extend'
+  | 'include'
+  | 'block'
+  | 'blockDefine'
+  | 'if'
+  | 'elseif'
+  | 'else'
+  | 'interpolation'
+  | 'code'
+  | 'closeSection'
+  | 'each'
+  | 'text'
+  | 'eos'
+
+export type Token = {
+  type: TokenType
+  val: any
+  lineno: number
+  pos: number
+  extraData?: Record<string, any>
+}
 
 class JadeStyleLexer {
-  constructor(input, filename) {
+  originalInput: string
+  input: string
+  filename: string
+  lineno = 1
+  cursor = 0
+
+  constructor(input: string, filename: string) {
     this.originalInput = input.replace(/\r\n|\r/g, '\n')
     this.input = this.originalInput
     this.filename = filename
-
-    this.lineno = 1
-    this.cursor = 0
-
-    this.assertExpression = this.assertExpression.bind(this)
-    this.assertCode = this.assertCode.bind(this)
   }
 
-  consume(len) {
-    this.input = this.input.substr(len)
+  consume(len: number) {
+    this.input = this.input.slice(len)
     this.cursor += len
     return this
   }
 
-  tok(type, val) {
+  tok(type: TokenType, val?: any): Token {
     return {
       type,
       val,
@@ -30,7 +57,7 @@ class JadeStyleLexer {
     }
   }
 
-  scan(reg, type, assert) {
+  scan(reg: RegExp, type: TokenType, assert?: (val: string) => void) {
     const captures = reg.exec(this.input)
     debug('captures = %j', captures)
     if (captures) {
@@ -49,9 +76,10 @@ class JadeStyleLexer {
     return this.tok('eos')
   }
 
+  tokens: Token[] = []
   lex() {
     this.tokens = []
-    let cur
+    let cur: Token
     while (((cur = this.next()), cur.type !== 'eos')) {
       // console.log(cur)
       this.tokens.push(cur)
@@ -59,7 +87,11 @@ class JadeStyleLexer {
     return this.tokens
   }
 
-  error(message, pos) {
+  next(): Token {
+    throw new Error('not implemented')
+  }
+
+  error(message: string, pos?: number) {
     return new RactSyntaxError(message, {
       input: this.originalInput,
       filename: this.filename,
@@ -67,15 +99,14 @@ class JadeStyleLexer {
     })
   }
 
-  assertExpression(expr) {
+  assertExpression = (expr: string) => {
     try {
       Function('', `return (${expr})`)
     } catch (e) {
       throw this.error('bad expression')
     }
   }
-
-  assertCode(code) {
+  assertCode = (code: string) => {
     try {
       Function('', code)
     } catch (e) {
@@ -84,8 +115,8 @@ class JadeStyleLexer {
   }
 }
 
-const Lexer = (module.exports = class Lexer extends JadeStyleLexer {
-  constructor(str, filename) {
+export class Lexer extends JadeStyleLexer {
+  constructor(str: string, filename: string) {
     super(str, filename)
   }
 
@@ -106,7 +137,7 @@ const Lexer = (module.exports = class Lexer extends JadeStyleLexer {
     )
   }
 
-  fail() {
+  fail(): Token {
     /* istanbul ignore next */
     const msg = `unexpected token on line ${this.lineno}`
     throw new Error(msg)
@@ -131,7 +162,7 @@ const Lexer = (module.exports = class Lexer extends JadeStyleLexer {
     const captures = reg.exec(this.input)
     if (!captures) return
 
-    const type = captures[1]
+    const type = captures[1] as TokenType
     const val = captures[2]
     const tok = this.tok(type, val)
     this.consume(captures[0].length)
@@ -158,7 +189,7 @@ const Lexer = (module.exports = class Lexer extends JadeStyleLexer {
     this.assertExpression(tok.val)
     this.consume(captures[0].length)
     const isRaw = captures[1] === '!'
-    tok.raw = isRaw
+    tok.extraData = { isRaw }
     return tok
   }
 
@@ -231,12 +262,12 @@ const Lexer = (module.exports = class Lexer extends JadeStyleLexer {
     const name = captures[2]
     const tok = this.tok('block', name)
     this.consume(captures[0].length)
-    tok.mode = mode
+    tok.extraData = { mode }
     return tok
   }
 
   text() {
-    let reg = /^([\s\S]+?)(?={{|$|<!--)/
+    const reg = /^([\s\S]+?)(?={{|$|<!--)/
     const tok = this.scan(reg, 'text')
 
     /* istanbul ignore if */
@@ -246,4 +277,4 @@ const Lexer = (module.exports = class Lexer extends JadeStyleLexer {
     this.lineno += lines
     return tok
   }
-})
+}

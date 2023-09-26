@@ -1,38 +1,49 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint brace-style: off */
 
-const assert = require('assert')
-const $clone = require('lodash/cloneDeep')
-const _trim = require('lodash/trim')
-const Lexer = require('./lexer.js')
-const nodes = require('./nodes/')
-const LocalUtil = require('./util.js')
-const ractError = require('./ractSyntaxError.js').error
+import { cloneDeep } from 'lodash-es'
+import { Lexer, Token, TokenType } from './lexer'
+import { FileNode } from './nodes'
+import { ractError } from './ractSyntaxError'
+import { getName } from './util'
 
-const Parser = (module.exports = class Parser {
-  constructor(input, filename, included) {
+export class Parser {
+  input: string
+  filename: string
+  lexer: Lexer
+  included = false
+  extending = false
+  tokens: Token[]
+  originalTokens: Token[]
+  fileNode: FileNode
+
+  constructor(input: string, filename: string, included?: boolean) {
     this.input = input
     this.filename = filename
     this.lexer = new Lexer(input, filename)
-
     // state
-    this.included = included
-    this.extending = false
+    this.included = included || false
   }
 
-  consume(n) {
+  error = ractError
+
+  consume(n: number) {
     this.tokens = this.tokens.slice(n)
   }
 
   cur() {
-    return this.tokens[0]
+    return (
+      this.tokens.at(0) || {
+        type: 'eos',
+        pos: this.input.length - 1,
+        lineno: this.input.split(/\n/).length,
+        val: undefined,
+      }
+    )
   }
 
-  expect(type, val) {
-    const tok = this.cur() || {
-      type: 'eos',
-      pos: this.input.length - 1,
-      lineno: this.input.split(/\n/).length,
-    }
+  expect(type: TokenType, val?: any) {
+    const tok = this.cur()
 
     // assert type
     if (tok.type !== type) {
@@ -52,36 +63,36 @@ const Parser = (module.exports = class Parser {
   parse() {
     this.originalTokens = this.lexer.lex()
     this.tokens = this.originalTokens.slice(0)
-    this.file = new nodes.File(this.filename)
+    this.fileNode = new FileNode(this.filename)
 
     while (this.tokens.length) {
       const n = this.parseFile()
 
       // extend
       if (n.type === 'extend') {
-        this.file.extending = n.val
+        this.fileNode.extending = n.val
         this.extending = true
       }
 
       // block
       else if (n.type === 'block') {
-        this.file.blocks = this.file.blocks || {}
-        const val = LocalUtil.getName(n.val)
-        const exists = this.file.blocks[val]
+        this.fileNode.blocks ||= {}
+        const val = getName(n.val)
+        const exists = this.fileNode.blocks[val]
         if (exists) {
           throw this.error('duplicate block definition ' + n.val, n.pos)
         }
-        this.file.blocks[val] = n
-        this.file.nodes.push(n)
+        this.fileNode.blocks[val] = n
+        this.fileNode.nodes.push(n)
       }
 
       // 其他
       else {
-        this.file.nodes.push(n)
+        this.fileNode.nodes.push(n)
       }
     }
 
-    return this.file
+    return this.fileNode
   }
 
   parseFile() {
@@ -100,7 +111,7 @@ const Parser = (module.exports = class Parser {
         case 'text':
           /* eslint no-fallthrough: off */
           // 允许空白
-          if (!_trim(this.cur().val)) {
+          if (!trim(this.cur().val)) {
             return this.parseChunk()
           }
         default:
@@ -161,7 +172,7 @@ const Parser = (module.exports = class Parser {
     this.expect('extend')
     const tok = this.cur()
     this.consume(1)
-    return $clone(tok)
+    return cloneDeep(tok)
   }
 
   parseBlock() {
@@ -177,7 +188,7 @@ const Parser = (module.exports = class Parser {
     const end = this.expect('closeSection', mode)
     this.consume(1)
 
-    const block = $clone(start)
+    const block = cloneDeep(start)
     block.nodes = [chunk]
     return block
   }
@@ -196,10 +207,10 @@ const Parser = (module.exports = class Parser {
   parseChunk() {
     const chunk = {
       type: 'chunk',
-      nodes: [],
+      nodes: [] as Token[],
     }
 
-    let tok, node
+    let tok: Token, node
     out: while (this.tokens.length) {
       switch (this.cur().type) {
         case 'comment':
@@ -209,7 +220,7 @@ const Parser = (module.exports = class Parser {
         case 'code':
           tok = this.cur()
           this.consume(1)
-          chunk.nodes.push($clone(tok))
+          chunk.nodes.push(cloneDeep(tok))
           continue
         case 'include':
           node = this.parseInclude()
@@ -235,7 +246,7 @@ const Parser = (module.exports = class Parser {
     const tok = this.cur()
     this.consume(1)
 
-    const node = $clone(tok)
+    const node = cloneDeep(tok)
     return node
   }
 
@@ -249,7 +260,7 @@ const Parser = (module.exports = class Parser {
     const end = this.expect('closeSection', 'each')
     this.consume(1)
 
-    const each = $clone(start)
+    const each = cloneDeep(start)
     each.nodes = [chunk]
     return each
   }
@@ -304,6 +315,4 @@ const Parser = (module.exports = class Parser {
 
     return ret
   }
-})
-
-Parser.prototype.error = ractError
+}

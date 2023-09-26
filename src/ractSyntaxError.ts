@@ -1,13 +1,21 @@
-const _repeat = require('lodash/repeat')
-const _padStart = require('lodash/padStart')
-const stringWidth = require('string-width')
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
-const RactSyntaxError = (module.exports = class RactSyntaxError extends Error {
-  constructor(message, options) {
+import { padStart, repeat } from 'lodash-es'
+import stringWidth from 'string-width'
+
+export class RactSyntaxError extends Error {
+  input: string
+  filename: string
+  pos: number
+
+  lines: string[]
+  lineno: number
+  colno: number
+
+  constructor(message: string, options: { input: string; filename: string; pos: number }) {
     super(message)
     Error.captureStackTrace(this)
 
-    options = options || {}
     this.input = options.input
     this.filename = options.filename || 'unknown'
     this.pos = options.pos
@@ -19,12 +27,12 @@ const RactSyntaxError = (module.exports = class RactSyntaxError extends Error {
     const arr = [`File ${this.filename}, line ${this.lineno} column ${this.colno}`]
     for (let i = this.lineno; i <= Math.min(this.lineno + 2, this.lines.length); i++) {
       const content = this.lines[i - 1].replace(/\t/, '    ') // 4 space
-      arr.push(`${_padStart(i.toString(), 4, ' ')}|${content}`)
+      arr.push(`${padStart(i.toString(), 4, ' ')}|${content}`)
 
       // indicator
       if (i === this.lineno) {
-        const indent = _repeat(' ', stringWidth(content.slice(0, this.colno - 1)))
-        arr.push(`${_repeat(' ', 4)}|${indent}^`)
+        const indent = repeat(' ', stringWidth(content.slice(0, this.colno - 1)))
+        arr.push(`${repeat(' ', 4)}|${indent}^`)
       }
     }
 
@@ -45,14 +53,14 @@ const RactSyntaxError = (module.exports = class RactSyntaxError extends Error {
 
     return [lineno, colno]
   }
-})
+}
 
 /**
  * 给其他类使用
  * SomeClass#error
  */
 
-module.exports.error = function error(message, pos) {
+export function ractError(message: string, pos: number) {
   return new RactSyntaxError(message, {
     input: this.input,
     filename: this.filename,

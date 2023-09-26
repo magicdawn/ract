@@ -4,10 +4,12 @@
   "description": "Yet another template engine learns from ractive",
   "main": "lib/",
   "scripts": {
-    "test": "mocha",
-    "test-cover": "nyc --reporter=lcov --reporter=text mocha",
+    "test": "vitest run",
+    "test-cover": "vitest run --coverage",
     "report-cover": "codecov",
-    "gen-readme": "swig render ./readme/readme.md > README.md && prettier --write README.md"
+    "gen-readme": "swig render ./readme/readme.md > README.md && prettier --write README.md",
+    "prepare": "husky install",
+    "test:dev": "vitest"
   },
   "repository": {
     "type": "git",
@@ -26,21 +28,25 @@
   "homepage": "https://github.com/magicdawn/ract#readme",
   "devDependencies": {
     "@magicdawn/eslint-config": "latest",
-    "@magicdawn/prettier-config": "latest",
-    "codecov": "^3.3.0",
-    "eslint": "^6.8.0",
-    "husky": "latest",
-    "istanbul": "^0.4.5",
-    "lint-staged": "latest",
-    "mocha": "^7.1.1",
-    "nyc": "^15.0.1",
-    "prettier": "latest",
-    "should": "^13.2.3"
+    "@magicdawn/prettier-config": "^0.0.2",
+    "@types/debug": "^4.1.9",
+    "@types/lodash-es": "^4.17.9",
+    "@typescript-eslint/eslint-plugin": "^6.7.3",
+    "@typescript-eslint/parser": "^6.7.3",
+    "@vitest/coverage-v8": "^0.34.5",
+    "codecov": "^3.8.2",
+    "eslint": "^8.50.0",
+    "eslint-config-prettier": "^9.0.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^14.0.1",
+    "prettier": "^3.0.3",
+    "typescript": "^5.2.2",
+    "vitest": "^0.34.5"
   },
   "dependencies": {
-    "debug": "^4.1.1",
-    "lodash": "^4.17.15",
-    "string-width": "^4.2.0"
+    "debug": "^4.3.4",
+    "lodash-es": "^4.17.21",
+    "string-width": "^6.1.0"
   },
   "husky": {
     "hooks": {
@@ -51,6 +57,9 @@
     "*.{js,less,vue}": [
       "prettier --write",
       "git add"
+    ],
+    "*.{js,jsx,ts,tsx,less,md}": [
+      "prettier --write"
     ]
   }
 }

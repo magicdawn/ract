@@ -1,9 +1,12 @@
-const Parser = require('./parser.js')
-const _startsWith = require('lodash/startsWith')
-const _trim = require('lodash/trim')
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
-module.exports = class Compiler {
-  constructor(file) {
+import { FileNode } from './nodes'
+
+export class Compiler {
+  file: FileNode
+  codes: string[]
+
+  constructor(file: FileNode) {
     this.file = file
   }
 
@@ -11,7 +14,7 @@ module.exports = class Compiler {
     this.codes = []
     this.addRuntime()
 
-    for (let cur of this.file.nodes) {
+    for (const cur of this.file.nodes) {
       this.dispatch(cur)
     }
 
@@ -21,11 +24,11 @@ module.exports = class Compiler {
     return Function('locals', body)
   }
 
-  output(code) {
+  output(code: string) {
     this.codes.push(code)
   }
 
-  buf(b) {
+  buf(b: any) {
     this.output(`__result__ += ${JSON.stringify(b)};`)
   }
 
@@ -59,7 +62,7 @@ module.exports = class Compiler {
    * try/catch 做什么
    */
 
-  wrap(body) {
+  wrap(body: string) {
     return `(function(){ ${body} })()`
   }
 
@@ -67,7 +70,7 @@ module.exports = class Compiler {
    * try/catch get 一个值
    */
 
-  tryGet(val, defaults) {
+  tryGet(val: string, defaults: string) {
     let code = `
       try{
         return ${val} || ${defaults};
@@ -99,7 +102,7 @@ module.exports = class Compiler {
     // 'chunk'
     // 'include'
     if (['block', 'chunk', 'include'].indexOf(node.type) > -1) {
-      for (let c of node.nodes) {
+      for (const c of node.nodes) {
         this.dispatch(c)
       }
       return
@@ -147,7 +150,7 @@ module.exports = class Compiler {
   }
 
   ifNode(i) {
-    for (let n of i.nodes) {
+    for (const n of i.nodes) {
       let val = 'false'
       if (n.val) {
         val = this.tryGet(n.val, 'false')
@@ -162,7 +165,7 @@ module.exports = class Compiler {
       }
 
       // single chunk
-      for (let c of n.nodes) {
+      for (const c of n.nodes) {
         this.dispatch(c)
       }
 
