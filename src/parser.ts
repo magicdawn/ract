@@ -80,6 +80,7 @@ export class Parser {
         const val = getName(n.val)
         const exists = this.fileNode.blocks[val]
         if (exists) {
+          // @ts-ignore
           throw this.error('duplicate block definition ' + n.val, n.pos)
         }
         this.fileNode.blocks[val] = n
@@ -111,7 +112,7 @@ export class Parser {
         case 'text':
           /* eslint no-fallthrough: off */
           // 允许空白
-          if (!trim(this.cur().val)) {
+          if (!(this.cur().val || '').trim()) {
             return this.parseChunk()
           }
         default:
@@ -178,7 +179,7 @@ export class Parser {
   parseBlock() {
     // start
     const start = this.cur()
-    const mode = start.mode
+    const mode = start.extraData?.mode
     this.consume(1)
 
     // chunk
@@ -188,16 +189,14 @@ export class Parser {
     const end = this.expect('closeSection', mode)
     this.consume(1)
 
-    const block = cloneDeep(start)
-    block.nodes = [chunk]
-    return block
+    return { ...start, nodes: [chunk] }
   }
 
   parseBlockDefine() {
     const tok = this.cur()
     this.consume(1)
     return {
-      type: 'block',
+      type: 'block' as const,
       val: tok.val,
       mode: 'block',
       nodes: [],
@@ -206,8 +205,10 @@ export class Parser {
 
   parseChunk() {
     const chunk = {
-      type: 'chunk',
-      nodes: [] as Token[],
+      type: 'chunk' as const,
+      // TODO: figure out typeof chunk.nodes
+      nodes: [] as any[],
+      val: undefined,
     }
 
     let tok: Token, node
@@ -260,15 +261,16 @@ export class Parser {
     const end = this.expect('closeSection', 'each')
     this.consume(1)
 
-    const each = cloneDeep(start)
-    each.nodes = [chunk]
-    return each
+    // const each = cloneDeep(start)
+    // each.nodes = [chunk]
+    // return each
+    return { ...start, nodes: [chunk] }
   }
 
   parseIf() {
     const ret = {
-      type: 'if',
-      nodes: [],
+      type: 'if' as const,
+      nodes: [] as any[],
     }
 
     // if
@@ -289,7 +291,7 @@ export class Parser {
       const tok = this.cur()
       this.consume(1)
 
-      let elseifChunk = this.parseChunk()
+      const elseifChunk = this.parseChunk()
       ret.nodes.push({
         type: 'elseif',
         val: tok.val,
@@ -302,7 +304,7 @@ export class Parser {
       const tok = this.cur()
       this.consume(1)
 
-      let elseChunk = this.parseChunk()
+      const elseChunk = this.parseChunk()
       ret.nodes.push({
         type: 'else',
         nodes: [elseChunk],

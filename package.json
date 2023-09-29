@@ -9,7 +9,10 @@
     "report-cover": "codecov",
     "gen-readme": "swig render ./readme/readme.md > README.md && prettier --write README.md",
     "prepare": "husky install",
-    "test:dev": "vitest"
+    "test:dev": "vitest",
+    "dev": "tsup --watch",
+    "build": "tsup",
+    "prepublishOnly": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -41,7 +44,8 @@
     "lint-staged": "^14.0.1",
     "prettier": "^3.0.3",
     "typescript": "^5.2.2",
-    "vitest": "^0.34.5"
+    "vitest": "^0.34.5",
+    "tsup": "^7.2.0"
   },
   "dependencies": {
     "debug": "^4.3.4",

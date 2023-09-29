@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 export class Node {
   type: string
   val: string
-  nodes: string[]
+  nodes: any[]
 
   constructor(val: string) {
     this.type = 'Node'

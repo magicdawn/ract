@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { Node } from './Node'
 
 export class FileNode extends Node {
-  extending = false
+  extending: string | undefined
 
-  blocks: Record<string, string>
+  blocks: Record<string, any>
 
   constructor(filename: string) {
     super(filename)

@@ -19,10 +19,7 @@ export class RactSyntaxError extends Error {
     this.input = options.input
     this.filename = options.filename || 'unknown'
     this.pos = options.pos
-
-    const tuple = this._pos()
-    this.lineno = tuple[0]
-    this.colno = tuple[1]
+    ;[this.lineno, this.colno] = this._pos()
 
     const arr = [`File ${this.filename}, line ${this.lineno} column ${this.colno}`]
     for (let i = this.lineno; i <= Math.min(this.lineno + 2, this.lines.length); i++) {
